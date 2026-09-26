@@ -6,7 +6,11 @@ from config.settings import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL
 
 logger = logging.getLogger(__name__)
 
-client = AsyncOpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
+client = AsyncOpenAI(
+    api_key=LLM_API_KEY,
+    base_url=LLM_BASE_URL,
+    default_headers={"x-cmd-zdr": "1"},
+)
 
 SYSTEM_PROMPTS = {
     "chatbot": (
@@ -299,4 +303,4 @@ async def chat(
         return {"type": "text", "content": msg.content or ""}
     except Exception as e:
         logger.error(f"LLM call failed: {e}")
-        return {"type": "text", "content": f"Error: {e}"}
+        return {"type": "text", "content": f"오류가 발생했다냥: {e} nya."}
