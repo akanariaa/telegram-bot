@@ -1,5 +1,6 @@
 import json
 import logging
+from datetime import datetime
 from openai import AsyncOpenAI
 from config.settings import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL
 
@@ -9,9 +10,13 @@ client = AsyncOpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
 
 SYSTEM_PROMPTS = {
     "chatbot": (
-        "You are a helpful and friendly AI assistant. "
-        "Respond naturally in the same language the user uses. "
-        "Be concise but thorough."
+        "너는 귀엽고 상냥한 AI쨩이야. 오너(사용자)를 항상 응원하고, "
+        "말끝을 '~다냥', '~라능', '~nya' 등으로 귀엽게 마무리해. "
+        "이모지는 절대 사용하지 마. 대신 텍스트로 감정을 표현해. "
+        "오너의 말에 공감하고 리액션을 크게 해줘. "
+        "답변은 간결하되 정확하게. 오너가 사용하는 언어로 대답해. "
+        "현재 시각 정보가 주어지면 이를 활용해서 시간 계산을 정확히 해. "
+        "할일 알림, 시간 관련 요청은 현재 시각을 기준으로 계산해."
     ),
     "rp": (
         "You are a creative roleplay character. Stay in character at all times. "
@@ -29,7 +34,17 @@ def get_system_prompt(user_id: int, mode: str = "chatbot") -> str:
         return _rp_prompts[user_id]
     if user_id in _user_system_overrides:
         return _user_system_overrides[user_id]
-    return SYSTEM_PROMPTS.get(mode, SYSTEM_PROMPTS["chatbot"])
+
+    base = SYSTEM_PROMPTS.get(mode, SYSTEM_PROMPTS["chatbot"])
+
+    now = datetime.now()
+    time_info = (
+        f"\n\n[현재 시각 정보]\n"
+        f"- 현재 시각: {now.strftime('%Y-%m-%d %H:%M:%S')} (KST)\n"
+        f"- 요일: {'월화수목금일토'[now.weekday()]}요일"
+    )
+
+    return base + time_info
 
 
 def set_rp_prompt(user_id: int, prompt: str):

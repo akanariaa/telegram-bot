@@ -14,3 +14,5 @@
 - Prefers HTML parse mode over Markdown for Telegram bot messages (better rendering of bold/code). Confidence: 0.9
 - Expects git push to happen automatically with every commit — not left as local-only. Confidence: 0.9
 - Prefers Korean-language bot UI text (command descriptions, status messages, help menus) rather than English. Confidence: 0.9
+- Expects errors to be surfaced to the user rather than silently swallowed — "오류가 났다면 오류가 났다고 알려줘야 하고". Confidence: 0.9
+- Wants root cause explanations when errors occur, not just error notifications — "왜 이런 오류가 날까?". Confidence: 0.85
