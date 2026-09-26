@@ -1,6 +1,7 @@
 """S3/B2 bucket storage module — list, inspect, and transfer files."""
 
 import asyncio
+import html as html_mod
 import logging
 import os
 import tempfile
@@ -164,19 +165,19 @@ async def list_bucket(
 
     objects = result["objects"]
     if not objects:
-        return f"📭 버킷 <code>{result['bucket']}</code>에 파일이 없습니다." + (
-            f" (prefix: <code>{prefix}</code>)" if prefix else ""
+        return f"📭 버킷 <code>{html_mod.escape(result['bucket'])}</code>에 파일이 없습니다." + (
+            f" (prefix: <code>{html_mod.escape(prefix)}</code>)" if prefix else ""
         )
 
-    lines = [f"📦 <b>버킷: <code>{result['bucket']}</code></b>"]
+    lines = [f"📦 <b>버킷: <code>{html_mod.escape(result['bucket'])}</code></b>"]
     if prefix:
-        lines.append(f"🔍 prefix: <code>{prefix}</code>")
+        lines.append(f"🔍 prefix: <code>{html_mod.escape(prefix)}</code>")
     lines.append(f"📊 {result['count']}개 파일" +
                  (" (더 있음)" if result["truncated"] else ""))
     lines.append("")
 
     for obj in objects:
-        lines.append(f"📄 <code>{obj['key']}</code> — {obj['size_human']}")
+        lines.append(f"📄 <code>{html_mod.escape(obj['key'])}</code> — {obj['size_human']}")
 
     return "\n".join(lines)
 
@@ -190,8 +191,8 @@ async def get_object_info(key: str, bucket: str | None = None) -> str:
 
     return (
         f"📄 <b>파일 정보</b>\n\n"
-        f"버킷: <code>{result['bucket']}</code>\n"
-        f"경로: <code>{result['key']}</code>\n"
+        f"버킷: <code>{html_mod.escape(result['bucket'])}</code>\n"
+        f"경로: <code>{html_mod.escape(result['key'])}</code>\n"
         f"크기: {result['size_human']}\n"
         f"타입: {result['content_type']}\n"
         f"수정: {result['last_modified']}"
@@ -230,15 +231,16 @@ async def download_and_send(
                 return f"⚠️ 다운로드 실패: {key}"
 
             filename = os.path.basename(key)
+            safe_key = html_mod.escape(key)
             with open(tmp_path, "rb") as f:
                 await application.bot.send_document(
                     chat_id=chat_id,
                     document=f,
                     filename=filename,
-                    caption=f"📄 <code>{key}</code> ({info['size_human']})",
+                    caption=f"📄 <code>{safe_key}</code> ({info['size_human']})",
                     parse_mode="HTML",
                 )
-            return f"✅ 파일 전송 완료: <code>{key}</code> ({info['size_human']})"
+            return f"✅ 파일 전송 완료: <code>{safe_key}</code> ({info['size_human']})"
         finally:
             if os.path.exists(tmp_path):
                 os.remove(tmp_path)
@@ -250,13 +252,14 @@ async def download_and_send(
         if not url:
             return f"⚠️ 파일이 너무 크고({info['size_human']}), 다운로드 URL 생성도 실패했습니다."
 
+        safe_key = html_mod.escape(key)
         await application.bot.send_message(
             chat_id=chat_id,
             text=(
-                f"📄 <code>{key}</code> ({info['size_human']})\n\n"
+                f"📄 <code>{safe_key}</code> ({info['size_human']})\n\n"
                 f"파일이 50MB를 초과하여 직접 전송이 불가합니다.\n"
                 f"다운로드 링크 (1시간 유효):\n{url}"
             ),
             parse_mode="HTML",
         )
-        return f"✅ 다운로드 링크 전송 완료: <code>{key}</code>"
+        return f"✅ 다운로드 링크 전송 완료: <code>{safe_key}</code>"

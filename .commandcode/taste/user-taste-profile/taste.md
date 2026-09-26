@@ -11,3 +11,6 @@
 - Wants Docker containerization from the start (Dockerfile + docker-compose.yml). Confidence: 0.9
 - Wants GitHub repos auto-created and pushed as part of project setup. Confidence: 0.9
 - Prefers parallel sub-agent execution for independent tasks. Confidence: 0.85
+- Prefers HTML parse mode over Markdown for Telegram bot messages (better rendering of bold/code). Confidence: 0.9
+- Expects git push to happen automatically with every commit — not left as local-only. Confidence: 0.9
+- Prefers Korean-language bot UI text (command descriptions, status messages, help menus) rather than English. Confidence: 0.9
