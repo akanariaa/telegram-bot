@@ -52,6 +52,17 @@ def init_db():
                 completed_at TEXT NOT NULL,
                 PRIMARY KEY (video_id, task_type)
             );
+
+            CREATE TABLE IF NOT EXISTS bookmarks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                content TEXT NOT NULL,
+                url TEXT,
+                tags TEXT,
+                created_at TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_bookmark_user ON bookmarks(user_id);
         """)
 
 

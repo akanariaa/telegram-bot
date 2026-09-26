@@ -145,6 +145,60 @@ async def dispatch_function_call(
         )
         return result
 
+    # --- Translation -------------------------------------------------------
+    if name == "translate_text":
+        from bot.modules.translator import translate_text
+        result = await translate_text(
+            text=arguments["text"],
+            target_lang=arguments["target_lang"],
+            source_lang=arguments.get("source_lang", ""),
+        )
+        return result
+
+    # --- Summarization -----------------------------------------------------
+    if name == "summarize_url":
+        from bot.modules.summarizer import summarize_url
+        result = await summarize_url(
+            url=arguments["url"],
+            language=arguments.get("language", ""),
+        )
+        return result
+
+    if name == "summarize_text":
+        from bot.modules.summarizer import summarize_text
+        result = await summarize_text(
+            text=arguments["text"],
+            language=arguments.get("language", ""),
+        )
+        return result
+
+    # --- Bookmarks ---------------------------------------------------------
+    if name == "add_bookmark":
+        from bot.modules.bookmark import add_bookmark
+        result = add_bookmark(
+            user_id=user_id,
+            title=arguments["title"],
+            content=arguments["content"],
+            url=arguments.get("url", ""),
+            tags=arguments.get("tags", ""),
+        )
+        return result
+
+    if name == "list_bookmarks":
+        from bot.modules.bookmark import list_bookmarks
+        result = list_bookmarks(user_id, tag=arguments.get("tag", ""))
+        return result
+
+    if name == "search_bookmarks":
+        from bot.modules.bookmark import search_bookmarks
+        result = search_bookmarks(user_id, query=arguments["query"])
+        return result
+
+    if name == "delete_bookmark":
+        from bot.modules.bookmark import delete_bookmark
+        result = delete_bookmark(user_id, bookmark_id=int(arguments["bookmark_id"]))
+        return result
+
     # --- Unknown function --------------------------------------------------
     logger.warning("Unknown function call requested: %s", name)
     return json.dumps({"error": f"Unknown function: {name}"})
@@ -254,6 +308,18 @@ async def handle_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         "  \"할일 목록\" 목록 보기\n"
         "  \"할일 완료\" 완료 처리\n"
         "  \"30분 후에 알려줘\" 예약 알림\n\n"
+        "<b>번역</b> (자연어로도 가능해 nya)\n"
+        "  \"이 문장 영어로 번역해줘\" + 텍스트\n"
+        "  \"일본어로 번역\" + 텍스트\n\n"
+        "<b>요약</b> (자연어로도 가능해 nya)\n"
+        "  \"이 URL 요약해줘\" + 링크\n"
+        "  \"이 텍스트 요약해줘\" + 텍스트\n"
+        "  PDF 파일을 보내면 자동으로 요약해준다냥\n\n"
+        "<b>북마크 / 메모</b> (자연어로도 가능해 nya)\n"
+        "  \"이거 북마크해줘\" 내용 저장\n"
+        "  \"북마크 목록\" 저장된 목록 보기\n"
+        "  \"북마크 검색\" 키워드로 검색\n"
+        "  \"북마크 삭제\" 삭제\n\n"
         "─────────────────\n"
         "명령어 없이 메시지를 보내면 챗봇 모드로 동작한다냥.\n"
         "LLM이 자연어를 분석해서 위 기능들을 자동으로 실행해준다 nya."

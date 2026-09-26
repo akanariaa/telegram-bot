@@ -182,6 +182,89 @@ def get_available_functions() -> list[dict]:
                 "required": ["key"],
             },
         },
+        {
+            "name": "translate_text",
+            "description": "Translate text to a target language. Use for 번역, translate.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "text": {"type": "string", "description": "The text to translate."},
+                    "target_lang": {"type": "string", "description": "Target language, e.g. English, Korean, Japanese, Chinese."},
+                    "source_lang": {"type": "string", "description": "Source language. Optional, auto-detected if omitted."},
+                },
+                "required": ["text", "target_lang"],
+            },
+        },
+        {
+            "name": "summarize_url",
+            "description": "Fetch a URL and summarize its content. Use for URL 요약, 링크 요약, 웹페이지 요약.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "url": {"type": "string", "description": "The URL to fetch and summarize."},
+                    "language": {"type": "string", "description": "Language for the summary output, e.g. Korean, English. Optional."},
+                },
+                "required": ["url"],
+            },
+        },
+        {
+            "name": "summarize_text",
+            "description": "Summarize a given text. Use for 텍스트 요약, 내용 요약, 글 요약.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "text": {"type": "string", "description": "The text to summarize."},
+                    "language": {"type": "string", "description": "Language for the summary output. Optional."},
+                },
+                "required": ["text"],
+            },
+        },
+        {
+            "name": "add_bookmark",
+            "description": "Save a bookmark/memo. Use for 북마크 저장, 메모 추가, 북마크 추가, 저장해줘.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "title": {"type": "string", "description": "Bookmark title."},
+                    "content": {"type": "string", "description": "Bookmark content/body."},
+                    "url": {"type": "string", "description": "Optional URL associated with the bookmark."},
+                    "tags": {"type": "string", "description": "Comma-separated tags. Optional."},
+                },
+                "required": ["title", "content"],
+            },
+        },
+        {
+            "name": "list_bookmarks",
+            "description": "List saved bookmarks. Use for 북마크 목록, 메모 목록, 저장한 것 보여줘.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "tag": {"type": "string", "description": "Filter by tag. Optional."},
+                },
+            },
+        },
+        {
+            "name": "search_bookmarks",
+            "description": "Search bookmarks by keyword. Use for 북마크 검색, 메모 검색.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "Search keyword."},
+                },
+                "required": ["query"],
+            },
+        },
+        {
+            "name": "delete_bookmark",
+            "description": "Delete a bookmark by ID. Use for 북마크 삭제, 메모 삭제.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "bookmark_id": {"type": "integer", "description": "ID of the bookmark to delete."},
+                },
+                "required": ["bookmark_id"],
+            },
+        },
     ]
 
 
