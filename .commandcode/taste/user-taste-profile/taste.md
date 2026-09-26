@@ -16,3 +16,6 @@
 - Prefers Korean-language bot UI text (command descriptions, status messages, help menus) rather than English. Confidence: 0.9
 - Expects errors to be surfaced to the user rather than silently swallowed — "오류가 났다면 오류가 났다고 알려줘야 하고". Confidence: 0.9
 - Wants root cause explanations when errors occur, not just error notifications — "왜 이런 오류가 날까?". Confidence: 0.85
+- Prefers bot persona to avoid emojis entirely — use text-based emotional expression (e.g., kaomoji, cute speech endings) instead. Confidence: 0.9
+- Wants the Telegram bot to have a cute otaku AI (쨩/다냥/라능) persona that addresses the user as "오너". Confidence: 0.9
+- Prefers dynamic context injection (current time, system state) into LLM system prompts at runtime rather than relying on the LLM's static knowledge. Confidence: 0.85

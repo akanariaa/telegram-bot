@@ -106,10 +106,10 @@ async def handle_add_todo(content: str, remind_at: str | None, user_id: int) -> 
         remind_at=remind_at,
     )
 
-    lines = [f"✅ 할 일이 추가되었어요!", f"", f"📝 {content}"]
+    lines = [f"할 일 추가했어냥!", f"", f"{content}"]
     if remind_at:
-        lines.append(f"⏰ 알림: {remind_at}")
-    lines.append(f"🆔 ID: {todo_id}")
+        lines.append(f"알림 시간: {remind_at}")
+    lines.append(f"ID: {todo_id}")
 
     return "\n".join(lines)
 
@@ -119,18 +119,18 @@ async def handle_list_todos(user_id: int) -> str:
     todos = list_todos(user_id=user_id)
 
     if not todos:
-        return "📭 등록된 할 일이 없어요!\n\n할 일을 추가하려면 자연어로 \"할일 추가해줘\"라고 말해 주세요."
+        return "등록된 할 일이 없어 nya!\n\n할 일을 추가하려면 자연어로 \"할일 추가해줘\"라고 말해줘 다냥."
 
-    lines = ["📋 <b>할 일 목록</b>\n"]
+    lines = ["<b>할 일 목록</b> 다냥\n"]
     for todo in todos:
-        status = "⬜"
+        status = "[ ]"
         remind_info = ""
         if todo.get("remind_at"):
-            remind_info = f" ⏰ {todo['remind_at']}"
+            remind_info = f" (알림: {todo['remind_at']})"
         lines.append(f"{status} <code>{todo['id']}</code> {todo['content']}{remind_info}")
 
-    lines.append(f"\n총 {len(todos)}개의 할 일이 있어요.")
-    lines.append("완료하려면 \"할일 완료\"라고 말해 주세요.")
+    lines.append(f"\n총 {len(todos)}개의 할 일이 있어 nya.")
+    lines.append("완료하려면 \"할일 완료\"라고 말해줘 다냥.")
 
     return "\n".join(lines)
 
@@ -140,9 +140,9 @@ async def handle_complete_todo(todo_id: int, user_id: int) -> str:
     success = complete_todo(todo_id=todo_id, user_id=user_id)
 
     if success:
-        return f"🎉 할 일이 완료되었어요!\n\n✅ ID <code>{todo_id}</code> — 완료 처리되었습니다. 수고하셨어요!"
+        return f"할 일 완료했어냥! 수고했어 nya!\n\nID <code>{todo_id}</code> 완료 처리되었어 다냥."
     else:
-        return f"❌ ID <code>{todo_id}</code> 할 일을 찾을 수 없거나 이미 완료되었어요."
+        return f"ID <code>{todo_id}</code> 할 일을 못 찾았거나 이미 완료된 거 같아 nya."
 
 
 async def check_reminders(application) -> None:
@@ -158,9 +158,9 @@ async def check_reminders(application) -> None:
         reminder_id = reminder["id"]
 
         message = (
-            f"🔔 <b>할 일 알림!</b>\n\n"
-            f"📝 {content}\n\n"
-            f"잊지 마세요! 💪"
+            f"<b>할 일 알림이다냥!</b>\n\n"
+            f"{content}\n\n"
+            f"잊지 말아줘 nya!"
         )
 
         try:
