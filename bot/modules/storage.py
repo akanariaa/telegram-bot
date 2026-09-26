@@ -164,19 +164,19 @@ async def list_bucket(
 
     objects = result["objects"]
     if not objects:
-        return f"📭 버킷 `{result['bucket']}`에 파일이 없습니다." + (
-            f" (prefix: `{prefix}`)" if prefix else ""
+        return f"📭 버킷 <code>{result['bucket']}</code>에 파일이 없습니다." + (
+            f" (prefix: <code>{prefix}</code>)" if prefix else ""
         )
 
-    lines = [f"📦 **버킷: `{result['bucket']}`**"]
+    lines = [f"📦 <b>버킷: <code>{result['bucket']}</code></b>"]
     if prefix:
-        lines.append(f"🔍 prefix: `{prefix}`")
+        lines.append(f"🔍 prefix: <code>{prefix}</code>")
     lines.append(f"📊 {result['count']}개 파일" +
                  (" (더 있음)" if result["truncated"] else ""))
     lines.append("")
 
     for obj in objects:
-        lines.append(f"📄 `{obj['key']}` — {obj['size_human']}")
+        lines.append(f"📄 <code>{obj['key']}</code> — {obj['size_human']}")
 
     return "\n".join(lines)
 
@@ -189,9 +189,9 @@ async def get_object_info(key: str, bucket: str | None = None) -> str:
         return f"⚠️ {result['error']}"
 
     return (
-        f"📄 **파일 정보**\n\n"
-        f"버킷: `{result['bucket']}`\n"
-        f"경로: `{result['key']}`\n"
+        f"📄 <b>파일 정보</b>\n\n"
+        f"버킷: <code>{result['bucket']}</code>\n"
+        f"경로: <code>{result['key']}</code>\n"
         f"크기: {result['size_human']}\n"
         f"타입: {result['content_type']}\n"
         f"수정: {result['last_modified']}"
@@ -235,10 +235,10 @@ async def download_and_send(
                     chat_id=chat_id,
                     document=f,
                     filename=filename,
-                    caption=f"📄 `{key}` ({info['size_human']})",
-                    parse_mode="Markdown",
+                    caption=f"📄 <code>{key}</code> ({info['size_human']})",
+                    parse_mode="HTML",
                 )
-            return f"✅ 파일 전송 완료: `{key}` ({info['size_human']})"
+            return f"✅ 파일 전송 완료: <code>{key}</code> ({info['size_human']})"
         finally:
             if os.path.exists(tmp_path):
                 os.remove(tmp_path)
@@ -253,10 +253,10 @@ async def download_and_send(
         await application.bot.send_message(
             chat_id=chat_id,
             text=(
-                f"📄 `{key}` ({info['size_human']})\n\n"
+                f"📄 <code>{key}</code> ({info['size_human']})\n\n"
                 f"파일이 50MB를 초과하여 직접 전송이 불가합니다.\n"
                 f"다운로드 링크 (1시간 유효):\n{url}"
             ),
-            parse_mode="Markdown",
+            parse_mode="HTML",
         )
-        return f"✅ 다운로드 링크 전송 완료: `{key}`"
+        return f"✅ 다운로드 링크 전송 완료: <code>{key}</code>"

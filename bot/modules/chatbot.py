@@ -16,10 +16,12 @@ from __future__ import annotations
 
 import json
 import logging
+import html as html_mod
 from typing import Any
 
 from telegram import Update
 from telegram.ext import ContextTypes
+from telegram.error import BadRequest
 
 from bot.services import llm, database
 from bot.utils.helpers import chunk_text
@@ -44,9 +46,17 @@ def _determine_mode(user_id: int) -> str:
 
 
 async def _send_reply(update: Update, text: str) -> None:
-    """Send *text* back to the user, chunking if it exceeds Telegram's limit."""
+    """Send *text* back to the user, chunking if it exceeds Telegram's limit.
+
+    Tries HTML parse mode first. If it fails (e.g. LLM returned unescaped
+    HTML special chars), escapes the text and retries as plain text.
+    """
     for chunk in chunk_text(text, max_len=4000):
-        await update.message.reply_text(chunk)
+        try:
+            await update.message.reply_text(chunk, parse_mode="HTML")
+        except BadRequest:
+            safe = html_mod.escape(chunk)
+            await update.message.reply_text(safe, parse_mode="HTML")
 
 
 # ---------------------------------------------------------------------------
@@ -152,8 +162,8 @@ async def handle_rp_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     if not args:
         await _send_reply(
             update,
-            "Usage: `/rp <character description>`\n"
-            "Example: `/rp You are a pirate who speaks in nautical slang.`",
+            "사용법: <code>/rp &lt;캐릭터 설명&gt;</code>\n"
+            "예시: <code>/rp 해적 말투로 대화해</code>",
         )
         return
 
@@ -163,8 +173,9 @@ async def handle_rp_command(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
     await _send_reply(
         update,
-        f"🎭 RP mode activated!\n\n*Character prompt:*\n{prompt}\n\n"
-        "Chat history has been cleared. Start talking!",
+        f"🎭 RP 모드 활성화!\n\n"
+        f"<b>캐릭터 프롬프트:</b>\n{prompt}\n\n"
+        f"대화 기록이 초기화되었습니다. 시작하세요!",
     )
 
 
@@ -176,8 +187,8 @@ async def handle_prompt_command(update: Update, context: ContextTypes.DEFAULT_TY
     if not args:
         await _send_reply(
             update,
-            "Usage: `/prompt <your custom system prompt>`\n"
-            "This overrides the default system prompt for all future messages.",
+            "사용법: <code>/prompt &lt;시스템 프롬프트&gt;</code>\n"
+            "기본 시스템 프롬프트를 덮어씁니다.",
         )
         return
 
@@ -187,8 +198,9 @@ async def handle_prompt_command(update: Update, context: ContextTypes.DEFAULT_TY
 
     await _send_reply(
         update,
-        f"✅ System prompt overridden!\n\n*New prompt:*\n{prompt}\n\n"
-        "Chat history has been cleared.",
+        f"✅ 시스템 프롬프트 변경 완료!\n\n"
+        f"<b>새 프롬프트:</b>\n{prompt}\n\n"
+        f"대화 기록이 초기화되었습니다.",
     )
 
 
@@ -197,7 +209,7 @@ async def handle_reset_command(update: Update, context: ContextTypes.DEFAULT_TYP
     uid = _user_id(update)
     llm.clear_prompts(uid)
     database.clear_chat_history(uid)
-    await _send_reply(update, "🔄 Everything reset — prompts cleared and chat history wiped.")
+    await _send_reply(update, "🔄 초기화 완료 — 프롬프트와 대화 기록이 삭제되었습니다.")
 
 
 async def handle_mode_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -207,12 +219,12 @@ async def handle_mode_command(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     from bot.services.llm import _rp_prompts, _user_system_overrides  # noqa: WPS450
 
-    lines = [f"*Current mode:* `{mode}`"]
+    lines = [f"<b>현재 모드:</b> <code>{mode}</code>"]
 
     if uid in _rp_prompts:
-        lines.append(f"*RP prompt:* {_rp_prompts[uid]}")
+        lines.append(f"<b>RP 프롬프트:</b> {_rp_prompts[uid]}")
     if uid in _user_system_overrides:
-        lines.append(f"*System override:* {_user_system_overrides[uid]}")
+        lines.append(f"<b>시스템 오버라이드:</b> {_user_system_overrides[uid]}")
 
     await _send_reply(update, "\n".join(lines))
 
@@ -220,31 +232,31 @@ async def handle_mode_command(update: Update, context: ContextTypes.DEFAULT_TYPE
 async def handle_help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/help — show all available commands."""
     text = (
-        "📖 *명령어 목록*\n"
+        "📖 <b>명령어 목록</b>\n"
         "─────────────────\n\n"
-        "💬 *챗봇 / RP*\n"
-        "  `/rp <캐릭터 설명>` — RP 모드 활성화\n"
-        "  `/prompt <프롬프트>` — 시스템 프롬프트 오버라이드\n"
-        "  `/reset` — 프롬프트 및 대화 초기화\n"
-        "  `/mode` — 현재 모드 확인\n\n"
-        "💰 *금융* (자연어로도 가능)\n"
+        "💬 <b>챗봇 / RP</b>\n"
+        "  <code>/rp &lt;캐릭터 설명&gt;</code> — RP 모드 활성화\n"
+        "  <code>/prompt &lt;프롬프트&gt;</code> — 시스템 프롬프트 오버라이드\n"
+        "  <code>/reset</code> — 프롬프트 및 대화 초기화\n"
+        "  <code>/mode</code> — 현재 모드 확인\n\n"
+        "💰 <b>금융</b> (자연어로도 가능)\n"
         "  \"USD 환율 알려줘\" — 환율 조회\n"
         "  \"100달러를 원화로\" — 환전 계산\n"
         "  \"비트코인 가격\" — 코인 시세 조회\n\n"
-        "📦 *저장소* (자연어로도 가능)\n"
+        "📦 <b>저장소</b> (자연어로도 가능)\n"
         "  \"버킷 파일 목록\" — S3/B2 파일 목록\n"
         "  \"파일 정보 알려줘\" — 파일 상세 조회\n"
         "  \"파일 다운로드해줘\" — 파일 전송\n\n"
-        "🎬 *YouTube 아카이빙* (자연어로도 가능)\n"
+        "🎬 <b>YouTube 아카이빙</b> (자연어로도 가능)\n"
         "  \"이 유튜브 영상 아카이브해줘\" + 링크\n\n"
-        "✅ *할일 관리* (자연어로도 가능)\n"
+        "✅ <b>할일 관리</b> (자연어로도 가능)\n"
         "  \"할일 추가해줘\" — 할일 등록\n"
         "  \"할일 목록\" — 목록 보기\n"
         "  \"할일 완료\" — 완료 처리\n"
         "  \"30분 후에 알려줘\" — 예약 알림\n\n"
         "─────────────────\n"
         "명령어 없이 메시지를 보내면 챗봇 모드로 동작합니다.\n"
-        "LL이 자연어를 분석하여 위 기능들을 자동으로 실행합니다."
+        "LLM이 자연어를 분석하여 위 기능들을 자동으로 실행합니다."
     )
     await _send_reply(update, text)
 

@@ -119,18 +119,18 @@ async def handle_list_todos(user_id: int) -> str:
     todos = list_todos(user_id=user_id)
 
     if not todos:
-        return "📭 등록된 할 일이 없어요!\n\n할 일을 추가하려면 `/추가 할일내용` 을 사용해 주세요."
+        return "📭 등록된 할 일이 없어요!\n\n할 일을 추가하려면 자연어로 \"할일 추가해줘\"라고 말해 주세요."
 
-    lines = ["📋 **할 일 목록**\n"]
+    lines = ["📋 <b>할 일 목록</b>\n"]
     for todo in todos:
         status = "⬜"
         remind_info = ""
         if todo.get("remind_at"):
             remind_info = f" ⏰ {todo['remind_at']}"
-        lines.append(f"{status} `{todo['id']}` {todo['content']}{remind_info}")
+        lines.append(f"{status} <code>{todo['id']}</code> {todo['content']}{remind_info}")
 
     lines.append(f"\n총 {len(todos)}개의 할 일이 있어요.")
-    lines.append("완료하려면 `/완료 ID` 를 사용해 주세요.")
+    lines.append("완료하려면 \"할일 완료\"라고 말해 주세요.")
 
     return "\n".join(lines)
 
@@ -140,9 +140,9 @@ async def handle_complete_todo(todo_id: int, user_id: int) -> str:
     success = complete_todo(todo_id=todo_id, user_id=user_id)
 
     if success:
-        return f"🎉 할 일이 완료되었어요!\n\n✅ ID `{todo_id}` - 완료 처리되었습니다. 수고하셨어요!"
+        return f"🎉 할 일이 완료되었어요!\n\n✅ ID <code>{todo_id}</code> — 완료 처리되었습니다. 수고하셨어요!"
     else:
-        return f"❌ ID `{todo_id}` 할 일을 찾을 수 없거나 이미 완료되었어요."
+        return f"❌ ID <code>{todo_id}</code> 할 일을 찾을 수 없거나 이미 완료되었어요."
 
 
 async def check_reminders(application) -> None:
@@ -158,7 +158,7 @@ async def check_reminders(application) -> None:
         reminder_id = reminder["id"]
 
         message = (
-            f"🔔 **할 일 알림!**\n\n"
+            f"🔔 <b>할 일 알림!</b>\n\n"
             f"📝 {content}\n\n"
             f"잊지 마세요! 💪"
         )
@@ -167,7 +167,7 @@ async def check_reminders(application) -> None:
             await application.bot.send_message(
                 chat_id=user_id,
                 text=message,
-                parse_mode="Markdown",
+                parse_mode="HTML",
             )
         except Exception:
             pass
