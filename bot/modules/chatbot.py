@@ -57,6 +57,7 @@ async def dispatch_function_call(
     name: str,
     arguments: dict[str, Any],
     user_id: int,
+    application=None,
 ) -> str:
     """Route a tool/function call to the appropriate module and return the result as a string."""
 
@@ -103,6 +104,34 @@ async def dispatch_function_call(
         from bot.modules.youtube_archive import archive_youtube
         result = await archive_youtube(
             arguments["url"], arguments.get("mode", "both")
+        )
+        return result
+
+    # --- S3/B2 storage -----------------------------------------------------
+    if name == "list_bucket":
+        from bot.modules.storage import list_bucket
+        result = await list_bucket(
+            prefix=arguments.get("prefix", ""),
+            max_keys=arguments.get("max_keys", 100),
+            bucket=arguments.get("bucket"),
+        )
+        return result
+
+    if name == "get_object_info":
+        from bot.modules.storage import get_object_info
+        result = await get_object_info(
+            key=arguments["key"],
+            bucket=arguments.get("bucket"),
+        )
+        return result
+
+    if name == "download_and_send_file":
+        from bot.modules.storage import download_and_send
+        result = await download_and_send(
+            key=arguments["key"],
+            application=application,
+            chat_id=user_id,
+            bucket=arguments.get("bucket"),
         )
         return result
 
@@ -251,6 +280,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     name=call["name"],
                     arguments=call["arguments"],
                     user_id=uid,
+                    application=context.application,
                 )
 
                 # Record the tool result in history so the LLM can see it

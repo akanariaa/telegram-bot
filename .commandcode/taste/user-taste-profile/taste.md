@@ -1,0 +1,13 @@
+# User Taste Profile
+- Communicates in Korean (한국어). All responses and UI text should be in Korean. Confidence: 0.95
+- Gives high-level requirements and expects the agent to handle architecture and implementation details autonomously. Confidence: 0.9
+- Prefers delegating to sub-agents for parallel work ("하위 에이전트들은 알아서 생성해"). Confidence: 0.85
+- Python is the preferred language for projects. Confidence: 0.9
+- Prefers async Python patterns (asyncio, python-telegram-bot v21+, AsyncOpenAI). Confidence: 0.85
+- Uses OpenAI-compatible API as the LLM backend. Confidence: 0.8
+- Prefers modular project structure with clear separation: handlers, services, modules, utils, config. Confidence: 0.9
+- Favors LLM-based natural language routing with function calling (MCP-style) over rigid command-based interfaces. Confidence: 0.85
+- Prefers SQLite for lightweight local data persistence. Confidence: 0.8
+- Wants Docker containerization from the start (Dockerfile + docker-compose.yml). Confidence: 0.9
+- Wants GitHub repos auto-created and pushed as part of project setup. Confidence: 0.9
+- Prefers parallel sub-agent execution for independent tasks. Confidence: 0.85

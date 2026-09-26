@@ -131,6 +131,42 @@ def get_available_functions() -> list[dict]:
                 "required": ["todo_id"],
             },
         },
+        {
+            "name": "list_bucket",
+            "description": "List files in the S3/B2 storage bucket. Use for 파일 목록, 버킷 조회, 저장소 보기.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "prefix": {"type": "string", "description": "Filter by key prefix/folder path, e.g. '[Channel] xxx'. Optional."},
+                    "max_keys": {"type": "integer", "description": "Max number of files to return (default 100)."},
+                    "bucket": {"type": "string", "description": "Bucket name override. Optional, uses default bucket."},
+                },
+            },
+        },
+        {
+            "name": "get_object_info",
+            "description": "Get detailed info (size, type, date) for a specific file in S3/B2. Use for 파일 정보 조회.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "key": {"type": "string", "description": "The full object key/path in the bucket."},
+                    "bucket": {"type": "string", "description": "Bucket name override. Optional."},
+                },
+                "required": ["key"],
+            },
+        },
+        {
+            "name": "download_and_send_file",
+            "description": "Download a file from S3/B2 and send it to the user via Telegram. Use for 파일 다운로드, 파일 전송, 파일 가져오기.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "key": {"type": "string", "description": "The full object key/path of the file to download."},
+                    "bucket": {"type": "string", "description": "Bucket name override. Optional."},
+                },
+                "required": ["key"],
+            },
+        },
     ]
 
 
