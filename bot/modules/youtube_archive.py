@@ -449,7 +449,7 @@ def _archive_youtube_sync(url: str, mode: str) -> str:
     logger.info("Resolving videos from URL: %s", url)
     video_objects = _resolve_videos(url, proxies)
     if not video_objects:
-        return f"❌ No videos found at: {url}"
+        return f"비디오를 찾을 수 없다냥: {url} nya."
 
     logger.info("Found %d video(s) from URL", len(video_objects))
 
@@ -471,7 +471,7 @@ def _archive_youtube_sync(url: str, mode: str) -> str:
                 logger.error("Metadata fetch error: %s", exc)
 
     if not metadata_list:
-        return f"❌ Failed to load metadata for any video at: {url}"
+        return f"비디오 메타데이터를 불러올 수 없다냥: {url} nya."
 
     logger.info("Loaded metadata for %d / %d videos",
                 len(metadata_list), len(video_objects))
@@ -497,8 +497,8 @@ def _archive_youtube_sync(url: str, mode: str) -> str:
     skipped = len(metadata_list) - len(pending)
     if not pending:
         return (
-            f"✅ All {len(metadata_list)} item(s) already archived "
-            f"(mode={mode}). Nothing to do."
+            f"모든 {len(metadata_list)}개 항목이 이미 아카이브되어 있다냥 "
+            f"(모드={mode}). 할 일이 없다냥 nya."
         )
 
     logger.info("Processing %d new item(s), %d already completed",
@@ -534,18 +534,18 @@ def _archive_youtube_sync(url: str, mode: str) -> str:
     # ------------------------------------------------------------------
     total = len(metadata_list)
     lines = [
-        f"📦 Archive complete (mode={mode})",
-        f"   Total videos: {total}",
-        f"   Already done: {skipped}",
-        f"   Succeeded:    {succeeded}",
-        f"   Failed:       {len(errors)}",
+        f"아카이브 완료했다냥 (모드={mode}) nya",
+        f"   총 비디오: {total}",
+        f"   이미 완료: {skipped}",
+        f"   성공:      {succeeded}",
+        f"   실패:      {len(errors)}",
     ]
     if errors:
         lines.append("")
-        lines.append("Errors:")
+        lines.append("오류 목록 다냥:")
         for e in errors[:20]:  # cap to avoid huge messages
-            lines.append(f"  • {e}")
+            lines.append(f"  - {e}")
         if len(errors) > 20:
-            lines.append(f"  … and {len(errors) - 20} more")
+            lines.append(f"  ... 그리고 {len(errors) - 20}개 더 있다냥 nya")
 
     return "\n".join(lines)

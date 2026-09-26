@@ -161,23 +161,23 @@ async def list_bucket(
     result = await asyncio.to_thread(_list_bucket_sync, prefix, max_keys, bucket)
 
     if "error" in result:
-        return f"⚠️ 버킷 조회 실패: {result['error']}"
+        return f"버킷 조회 실패했다냥: {result['error']} nya."
 
     objects = result["objects"]
     if not objects:
-        return f"📭 버킷 <code>{html_mod.escape(result['bucket'])}</code>에 파일이 없습니다." + (
+        return f"버킷 <code>{html_mod.escape(result['bucket'])}</code>에 파일이 없다냥." + (
             f" (prefix: <code>{html_mod.escape(prefix)}</code>)" if prefix else ""
-        )
+        ) + " nya"
 
-    lines = [f"📦 <b>버킷: <code>{html_mod.escape(result['bucket'])}</code></b>"]
+    lines = [f"<b>버킷: <code>{html_mod.escape(result['bucket'])}</code></b> 다냥"]
     if prefix:
-        lines.append(f"🔍 prefix: <code>{html_mod.escape(prefix)}</code>")
-    lines.append(f"📊 {result['count']}개 파일" +
-                 (" (더 있음)" if result["truncated"] else ""))
+        lines.append(f"prefix: <code>{html_mod.escape(prefix)}</code>")
+    lines.append(f"{result['count']}개 파일" +
+                 (" (더 있음)" if result["truncated"] else "") + " nya")
     lines.append("")
 
     for obj in objects:
-        lines.append(f"📄 <code>{html_mod.escape(obj['key'])}</code> — {obj['size_human']}")
+        lines.append(f"<code>{html_mod.escape(obj['key'])}</code> — {obj['size_human']}")
 
     return "\n".join(lines)
 
@@ -187,15 +187,15 @@ async def get_object_info(key: str, bucket: str | None = None) -> str:
     result = await asyncio.to_thread(_get_object_info_sync, key, bucket)
 
     if "error" in result:
-        return f"⚠️ {result['error']}"
+        return f"{result['error']} nya."
 
     return (
-        f"📄 <b>파일 정보</b>\n\n"
+        f"<b>파일 정보</b> 다냥\n\n"
         f"버킷: <code>{html_mod.escape(result['bucket'])}</code>\n"
         f"경로: <code>{html_mod.escape(result['key'])}</code>\n"
         f"크기: {result['size_human']}\n"
         f"타입: {result['content_type']}\n"
-        f"수정: {result['last_modified']}"
+        f"수정: {result['last_modified']} nya"
     )
 
 
@@ -213,7 +213,7 @@ async def download_and_send(
     info = await asyncio.to_thread(_get_object_info_sync, key, bucket)
 
     if "error" in info:
-        return f"⚠️ {info['error']}"
+        return f"{info['error']} nya."
 
     size = info["size"]
 
@@ -228,7 +228,7 @@ async def download_and_send(
                 _download_object_sync, key, tmp_path, bucket
             )
             if not result:
-                return f"⚠️ 다운로드 실패: {key}"
+                return f"다운로드 실패했다냥: {key} nya."
 
             filename = os.path.basename(key)
             safe_key = html_mod.escape(key)
@@ -237,10 +237,10 @@ async def download_and_send(
                     chat_id=chat_id,
                     document=f,
                     filename=filename,
-                    caption=f"📄 <code>{safe_key}</code> ({info['size_human']})",
+                    caption=f"<code>{safe_key}</code> ({info['size_human']}) 다냥",
                     parse_mode="HTML",
                 )
-            return f"✅ 파일 전송 완료: <code>{safe_key}</code> ({info['size_human']})"
+            return f"파일 전송 완료했다냥: <code>{safe_key}</code> ({info['size_human']}) nya."
         finally:
             if os.path.exists(tmp_path):
                 os.remove(tmp_path)
@@ -250,16 +250,16 @@ async def download_and_send(
             _generate_presigned_url_sync, key, 3600, bucket
         )
         if not url:
-            return f"⚠️ 파일이 너무 크고({info['size_human']}), 다운로드 URL 생성도 실패했습니다."
+            return f"파일이 너무 크고({info['size_human']}), 다운로드 URL 생성도 실패했다냥 nya."
 
         safe_key = html_mod.escape(key)
         await application.bot.send_message(
             chat_id=chat_id,
             text=(
-                f"📄 <code>{safe_key}</code> ({info['size_human']})\n\n"
-                f"파일이 50MB를 초과하여 직접 전송이 불가합니다.\n"
-                f"다운로드 링크 (1시간 유효):\n{url}"
+                f"<code>{safe_key}</code> ({info['size_human']}) 다냥\n\n"
+                f"파일이 50MB를 초과해서 직접 전송이 불가하다냥.\n"
+                f"다운로드 링크 (1시간 유효) nya:\n{url}"
             ),
             parse_mode="HTML",
         )
-        return f"✅ 다운로드 링크 전송 완료: <code>{safe_key}</code>"
+        return f"다운로드 링크 전송 완료했다냥: <code>{safe_key}</code> nya."

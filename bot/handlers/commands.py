@@ -26,11 +26,11 @@ from bot.modules.todo import check_reminders
 logger = logging.getLogger(__name__)
 
 BOT_COMMANDS = [
-    BotCommand("help", "명령어 목록 보기"),
-    BotCommand("rp", "RP 모드 활성화 (캐릭터 설정)"),
-    BotCommand("prompt", "시스템 프롬프트 오버라이드"),
-    BotCommand("reset", "프롬프트 및 대화 초기화"),
-    BotCommand("mode", "현재 모드 확인"),
+    BotCommand("help", "명령어 목록을 보여준다냥"),
+    BotCommand("rp", "RP 모드를 활성화한다냥 (캐릭터 설정)"),
+    BotCommand("prompt", "시스템 프롬프트를 오버라이드한다냥"),
+    BotCommand("reset", "프롬프트 및 대화를 초기화한다냥"),
+    BotCommand("mode", "현재 모드를 확인한다냥"),
 ]
 
 

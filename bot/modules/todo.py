@@ -108,8 +108,8 @@ async def handle_add_todo(content: str, remind_at: str | None, user_id: int) -> 
 
     lines = [f"할 일 추가했어냥!", f"", f"{content}"]
     if remind_at:
-        lines.append(f"알림 시간: {remind_at}")
-    lines.append(f"ID: {todo_id}")
+        lines.append(f"알림 시간: {remind_at} nya")
+    lines.append(f"ID: {todo_id} 다냥")
 
     return "\n".join(lines)
 
@@ -119,7 +119,7 @@ async def handle_list_todos(user_id: int) -> str:
     todos = list_todos(user_id=user_id)
 
     if not todos:
-        return "등록된 할 일이 없어 nya!\n\n할 일을 추가하려면 자연어로 \"할일 추가해줘\"라고 말해줘 다냥."
+        return "등록된 할 일이 없다냥!\n\n할 일을 추가하려면 자연어로 \"할일 추가해줘\"라고 말해줘 다냥."
 
     lines = ["<b>할 일 목록</b> 다냥\n"]
     for todo in todos:
@@ -129,7 +129,7 @@ async def handle_list_todos(user_id: int) -> str:
             remind_info = f" (알림: {todo['remind_at']})"
         lines.append(f"{status} <code>{todo['id']}</code> {todo['content']}{remind_info}")
 
-    lines.append(f"\n총 {len(todos)}개의 할 일이 있어 nya.")
+    lines.append(f"\n총 {len(todos)}개의 할 일이 있다냥 nya.")
     lines.append("완료하려면 \"할일 완료\"라고 말해줘 다냥.")
 
     return "\n".join(lines)
@@ -142,7 +142,7 @@ async def handle_complete_todo(todo_id: int, user_id: int) -> str:
     if success:
         return f"할 일 완료했어냥! 수고했어 nya!\n\nID <code>{todo_id}</code> 완료 처리되었어 다냥."
     else:
-        return f"ID <code>{todo_id}</code> 할 일을 못 찾았거나 이미 완료된 거 같아 nya."
+        return f"ID <code>{todo_id}</code> 할 일을 못 찾았거나 이미 완료된 거 같다냥 nya."
 
 
 async def check_reminders(application) -> None:

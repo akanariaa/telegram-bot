@@ -44,30 +44,30 @@ async def get_exchange_rate(base: str, target: str) -> str:
             resp.raise_for_status()
             data = resp.json()
     except httpx.HTTPStatusError:
-        return f"⚠️ 환율 정보를 가져오는 중 오류가 발생했습니다. (HTTP {resp.status_code})"
+        return f"환율 정보를 가져오는 중 오류가 발생했다냥 (HTTP {resp.status_code}) nya."
     except httpx.RequestError:
-        return "⚠️ 환율 API에 연결할 수 없습니다. 네트워크 상태를 확인해 주세요."
+        return "환율 API에 연결할 수 없다냥. 네트워크 상태를 확인해줘 nya."
     except Exception:
-        return "⚠️ 환율 조회 중 알 수 없는 오류가 발생했습니다."
+        return "환율 조회 중 알 수 없는 오류가 발생했다냥 nya."
 
     if data.get("result") == "error":
         reason = data.get("error-type", "알 수 없는 오류")
-        return f"⚠️ 환율 조회 실패: {reason}"
+        return f"환율 조회 실패했다냥: {reason} nya."
 
     rates = data.get("rates", {})
     if target not in rates:
-        return f"⚠️ 통화 코드 <b>{target}</b> 를 찾을 수 없습니다. 올바른 ISO 4217 코드를 입력해 주세요."
+        return f"통화 코드 <b>{target}</b> 를 찾을 수 없다냥. 올바른 ISO 4217 코드를 입력해줘 nya."
 
     rate = rates[target]
     update_time = data.get("time_last_update_utc", "알 수 없음")
 
     return (
-        f"💱 <b>환율 정보</b>\n"
+        f"<b>환율 정보</b> 다냥\n"
         f"━━━━━━━━━━━━━━━\n"
-        f"🏳️ 기준 통화: {base}\n"
-        f"🎯 대상 통화: {target}\n"
-        f"📊 환율: 1 {base} = <b>{rate:,.4f}</b> {target}\n"
-        f"🕐 업데이트: {update_time}"
+        f"기준 통화: {base}\n"
+        f"대상 통화: {target}\n"
+        f"환율: 1 {base} = <b>{rate:,.4f}</b> {target}\n"
+        f"업데이트: {update_time} nya"
     )
 
 
@@ -99,30 +99,30 @@ async def convert_currency(amount: float, base: str, target: str) -> str:
             resp.raise_for_status()
             data = resp.json()
     except httpx.HTTPStatusError:
-        return f"⚠️ 환율 정보를 가져오는 중 오류가 발생했습니다. (HTTP {resp.status_code})"
+        return f"환율 정보를 가져오는 중 오류가 발생했다냥 (HTTP {resp.status_code}) nya."
     except httpx.RequestError:
-        return "⚠️ 환율 API에 연결할 수 없습니다. 네트워크 상태를 확인해 주세요."
+        return "환율 API에 연결할 수 없다냥. 네트워크 상태를 확인해줘 nya."
     except Exception:
-        return "⚠️ 환전 계산 중 알 수 없는 오류가 발생했습니다."
+        return "환전 계산 중 알 수 없는 오류가 발생했다냥 nya."
 
     if data.get("result") == "error":
         reason = data.get("error-type", "알 수 없는 오류")
-        return f"⚠️ 환율 조회 실패: {reason}"
+        return f"환율 조회 실패했다냥: {reason} nya."
 
     rates = data.get("rates", {})
     if target not in rates:
-        return f"⚠️ 통화 코드 <b>{target}</b> 를 찾을 수 없습니다. 올바른 ISO 4217 코드를 입력해 주세요."
+        return f"통화 코드 <b>{target}</b> 를 찾을 수 없다냥. 올바른 ISO 4217 코드를 입력해줘 nya."
 
     rate = rates[target]
     converted = amount * rate
 
     return (
-        f"💰 <b>환전 계산 결과</b>\n"
+        f"<b>환전 계산 결과</b> 다냥\n"
         f"━━━━━━━━━━━━━━━\n"
-        f"📥 금액: {amount:,.2f} {base}\n"
-        f"📊 환율: 1 {base} = <b>{rate:,.4f}</b> {target}\n"
+        f"금액: {amount:,.2f} {base}\n"
+        f"환율: 1 {base} = <b>{rate:,.4f}</b> {target}\n"
         f"━━━━━━━━━━━━━━━\n"
-        f"📤 결과: <b>{converted:,.2f} {target}</b>"
+        f"결과: <b>{converted:,.2f} {target}</b> nya"
     )
 
 
@@ -147,8 +147,8 @@ async def get_crypto_price(symbol: str, currency: str = "usd") -> str:
     if coin_id is None:
         available = ", ".join(sorted({v for v in CRYPTO_ID_MAP.values()}))
         return (
-            f"⚠️ 지원하지 않는 코인 심볼입니다: <b>{symbol}</b>\n"
-            f"지원 코인: {available}"
+            f"지원하지 않는 코인 심볼이다냥: <b>{symbol}</b>\n"
+            f"지원 코인: {available} nya"
         )
 
     currency = currency.lower()
@@ -162,26 +162,26 @@ async def get_crypto_price(symbol: str, currency: str = "usd") -> str:
             resp.raise_for_status()
             data = resp.json()
     except httpx.HTTPStatusError:
-        return f"⚠️ 코인 가격을 가져오는 중 오류가 발생했습니다. (HTTP {resp.status_code})"
+        return f"코인 가격을 가져오는 중 오류가 발생했다냥 (HTTP {resp.status_code}) nya."
     except httpx.RequestError:
-        return "⚠️ CoinGecko API에 연결할 수 없습니다. 네트워크 상태를 확인해 주세요."
+        return "CoinGecko API에 연결할 수 없다냥. 네트워크 상태를 확인해줘 nya."
     except Exception:
-        return "⚠️ 코인 가격 조회 중 알 수 없는 오류가 발생했습니다."
+        return "코인 가격 조회 중 알 수 없는 오류가 발생했다냥 nya."
 
     if coin_id not in data:
-        return f"⚠️ <b>{coin_id}</b> 의 가격 정보를 찾을 수 없습니다."
+        return f"<b>{coin_id}</b> 의 가격 정보를 찾을 수 없다냥 nya."
 
     price_info = data[coin_id]
     if currency not in price_info:
-        return f"⚠️ 통화 <b>{currency.upper()}</b> 에 대한 가격 정보가 없습니다."
+        return f"통화 <b>{currency.upper()}</b> 에 대한 가격 정보가 없다냥 nya."
 
     price = price_info[currency]
 
     return (
-        f"🪙 <b>암호화폐 시세</b>\n"
+        f"<b>암호화폐 시세</b> 다냥\n"
         f"━━━━━━━━━━━━━━━\n"
-        f"📛 코인: <b>{coin_id.upper()}</b>\n"
-        f"💵 가격: <b>{price:,.2f} {currency.upper()}</b>\n"
+        f"코인: <b>{coin_id.upper()}</b>\n"
+        f"가격: <b>{price:,.2f} {currency.upper()}</b>\n"
         f"━━━━━━━━━━━━━━━\n"
-        f"📡 출처: CoinGecko"
+        f"출처: CoinGecko nya"
     )
